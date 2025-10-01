@@ -45,7 +45,7 @@
                             <td class="px-4 py-2">{{ $product->description }}</td>
                             <td class="px-4 py-2">¥{{ number_format($product->price) }}</td>
                             <td class="px-4 py-2">
-                                <a href="{{ route('products.show', $product->id) }}" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">編集</a>
+                                <a href="{{ route('products.detail', $product->id) }}" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">編集</a>
                             </td>
                         </tr>
                     @empty
