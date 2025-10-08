@@ -44,8 +44,8 @@
                             <td class="px-4 py-2 border">{{ $product->name }}</td>
                             <td class="px-4 py-2 border">{{ $product->description }}</td>
                             <td class="px-4 py-2 border">
-                                @if($product->image)
-                                    <img src="{{ asset('storage/' . $product->image) }}" alt="商品画像" class="w-16 h-auto mx-auto">
+                                @if($product->image_path)
+                                    <img src="{{ asset('storage/' . $product->image_path) }}" alt="商品画像" class="w-16 h-auto mx-auto">
                                 @else
                                     <span class="text-gray-400">なし</span>
                                 @endif

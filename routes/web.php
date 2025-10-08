@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\LikeController;
 
 
 Route::get('/', fn () => redirect()->route('products.index'));
@@ -53,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
 
     // アカウント情報更新
     Route::put('/account/update', [AccountController::class, 'update'])->name('account.update');
+    // いいね
+    Route::post('/products/{product}/like', [LikeController::class, 'toggle'])->name('likes.toggle');
 });
 
 require __DIR__.'/auth.php';
