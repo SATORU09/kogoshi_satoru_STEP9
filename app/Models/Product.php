@@ -19,4 +19,19 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    public function likes()
+{
+    return $this->hasMany(\App\Models\Like::class);
+}
+
+public function isLikedBy($user)
+{
+    if (!$user) return false;
+    return $this->likes()->where('user_id', $user->id)->exists();
+}
+
 }

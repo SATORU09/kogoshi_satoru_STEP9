@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container">
     <div class="max-w-md mx-auto bg-white rounded shadow p-4 relative">
 
@@ -12,21 +13,13 @@
                 <img src="{{ asset('images/no_image.png') }}" class="w-full h-64 object-cover rounded">
             @endif
 
-           <!-- お気に入りボタン -->
-           <button
-           id="favoriteButton"
-           type="button"
-           aria-pressed="false"
-           aria-label="お気に入り"
-           class="absolute top-2 right-2 text-gray-400 text-3xl transition-colors focus:outline-none"
-           >
-
-           <svg id="favoriteIcon" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.02 4.02 4 6.5 4c1.74 0 3.41 1 4.5 2.09C12.09 5 13.76 4 15.5 4 17.98 4 20 6.02 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-           </svg>
-           </button>
-
-           <span class="hidden text-red-500"></span>
+            <button id="like-btn" data-product-id="{{ $product->id }}" class="text-xl">
+                @if($product->isLikedBy(Auth::user()))
+                ❤️
+                @else
+                🤍
+                @endif
+            </button>
         </div>
 
         <!-- 商品情報 -->
@@ -46,20 +39,40 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const btn = document.getElementById('favoriteButton');
-  if (!btn) return;
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('like-btn');
+  const productId = btn.dataset.productId;
+  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  btn.addEventListener('click', function () {
-    const isFav = btn.getAttribute('aria-pressed') === 'true';
-    if (isFav) {
-      btn.classList.remove('text-red-500');
-      btn.classList.add('text-gray-400');
-      btn.setAttribute('aria-pressed', 'false');
-    } else {
-      btn.classList.remove('text-gray-400');
-      btn.classList.add('text-red-500');
-      btn.setAttribute('aria-pressed', 'true');
+  btn.addEventListener('click', async function(e) {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`/products/${productId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': token,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        },
+        credentials: 'same-origin' // セッション Cookie を送る
+      });
+
+      console.log('fetch status:', response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        btn.textContent = data.liked ? '❤️' : '🤍';
+      } else {
+        // エラーボディを出す（JSON or text）
+        const text = await response.text();
+        console.error('Like API error:', response.status, text);
+        alert('エラーが発生しました（詳しくはコンソールを確認してください）');
+      }
+    } catch (err) {
+      console.error('Fetch failed:', err);
+      alert('通信に失敗しました（ネットワーク等を確認してください）');
     }
   });
 });
