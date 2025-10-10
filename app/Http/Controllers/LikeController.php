@@ -13,20 +13,8 @@ class LikeController extends Controller
     {
         $user = Auth::user();
 
-        $like = Like::where('user_id', $user->id)
-                    ->where('product_id', $product->id)
-                    ->first();
-
-        if ($like) {
-            $like->delete();
-            return response()->json(['liked' => false]);
-        } else {
-            Like::create([
-                'user_id' => $user->id,
-                'product_id' => $product->id,
-            ]);
-            return response()->json(['liked' => true]);
-        }
+        $liked = Like::toggleLike($user->id, $product->id);
+        return response()->json(['liked' => $liked]);
     }
 }
 

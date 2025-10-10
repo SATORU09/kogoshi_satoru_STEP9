@@ -60,15 +60,7 @@ class CartController extends Controller
                 );
             }
 
-            Order::create([
-                'user_id'    => auth()->id(),
-                'product_id' => $id,
-                'quantity'   => $item['quantity'],
-                'price'      => $item['price'],
-            ]);
-
-            $product->stock -= $item['quantity'];
-            $product->save();
+            Order::createOrder(auth()->id(), $id, $item['quantity'], $item['price']);
         }
 
         session()->forget('cart');

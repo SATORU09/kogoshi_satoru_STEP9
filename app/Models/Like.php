@@ -13,4 +13,22 @@ class Like extends Model
         'user_id',
         'product_id',
     ];
+
+    public static function toggleLike($userId, $productId)
+    {
+        $like = self::where('user_id', $userId)
+                    ->where('product_id', $productId)
+                    ->first();
+
+        if ($like) {
+            $like->delete();
+            return false;
+        } else {
+            self::create([
+                'user_id' => $userId,
+                'product_id' => $productId,
+            ]);
+            return true;
+        }
+    }
 }
